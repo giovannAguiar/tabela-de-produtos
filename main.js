@@ -4,7 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('container');
 
     fetch(URL)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             let rows = '';
             data.forEach(product => {
@@ -15,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td>${product.category}</td>
                         <td>${product.description}</td>
                         <td>$${product.price}</td>
+                        <td><img src="${product.image}" alt="${product.title}" style="max-width: 50px; max-height: 50px;"></td>
+                        <td>${product.rating.rate}</td>
+                        <td>${product.rating.count}</td>
                     </tr>
                 `;
             });
@@ -22,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error("Erro ao buscar os produtos:", error);
-            container.innerHTML = '<p class="text-danger">Ocorreu um erro.</p>';
+            container.innerHTML = '<p class="text-danger">Ocorreu um erro ao carregar os produtos.</p>';
         });
 });
+          
